@@ -9,11 +9,12 @@ provider "google" {
   zone = "us-west1-a"
 }
 
-data "google_project" "current" {
-  project_id = var.project_id
+module "network" {
+  source       = "./modules/network"
+  network_name = "wiz-vpc"
 }
 
-output "project_number" {
-  description = "Your GCP project number (read‐only)"
-  value       = data.google_project.current.number
+output "vpc_id" {
+  description = "ID of the VPC network from the network module"
+  value       = module.network.vpc_id
 }
