@@ -33,8 +33,3 @@ variable "ssh_public_key_path" {
   description = "Path to SSH public key for user ubuntu"
   type        = string
 }
-
-variable "ssh_private_key_path" {
-  description = "Path to SSH private key for connection"
-  type        = string
-}

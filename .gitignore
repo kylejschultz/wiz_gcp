@@ -8,3 +8,9 @@
 
 # Editor directories and files
 .vscode/
+
+# terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl

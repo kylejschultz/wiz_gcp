@@ -29,33 +29,15 @@ resource "google_compute_instance" "db_vm" {
   tags = var.network_tags
 
   metadata = {
-    ssh-keys = "ubuntu:${var.ssh_public_key_path}"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    host        = self.network_interface[0].access_config[0].nat_ip
-    private_key = var.ssh_private_key_path
-    timeout     = "2m"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/../scripts/mongo-install.sh"
-    destination = "/home/ubuntu/mongo-install.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x ~/mongo-install.sh",
-      "~/mongo-install.sh"
-    ]
+    ssh-keys       = "ubuntu:${file(var.ssh_public_key_path)}"
+    startup-script = file("${path.module}/../../scripts/mongo-install.sh")
   }
 }
 
 resource "google_compute_firewall" "db_ssh" {
   name    = "${var.instance_name}-ssh-ingress"
   network = var.network
+
   allow {
     protocol = "tcp"
     ports    = ["22"]
