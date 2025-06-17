@@ -14,7 +14,6 @@ resource "google_container_cluster" "primary" {
   network                  = var.network_id
   subnetwork               = var.subnet_id
   remove_default_node_pool = true
-  initial_node_count       = var.node_count
   deletion_protection      = false
 }
 
