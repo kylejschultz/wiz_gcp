@@ -29,21 +29,28 @@ resource "google_compute_instance" "db_vm" {
   tags = var.network_tags
 
   metadata = {
-    startup-script = <<-EOT
-      #!/bin/bash
-      INIT_MARKER="/var/lib/mongodb/.initialized"
-      if [ ! -f "$INIT_MARKER" ]; then
-        apt-get update
-        apt-get install -y gnupg curl
-        wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add -
-        echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-        apt-get update
-        apt-get install -y mongodb-org=6.0.9 mongodb-org-server=6.0.9 mongodb-org-shell=6.0.9 mongodb-org-mongos=6.0.9 mongodb-org-tools=6.0.9
-        systemctl enable mongod
-        systemctl start mongod
-        touch "$INIT_MARKER"
-      fi
-    EOT
+    ssh-keys = "ubuntu:${file(var.ssh_public_key_path)}"
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    host        = self.network_interface[0].access_config[0].nat_ip
+    private_key = file(var.ssh_private_key_path)
+    timeout     = "2m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y gnupg curl",
+      "curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor",
+      "echo 'deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse' | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list",
+      "sudo apt-get update",
+      "sudo apt-get install -y mongodb-org=6.0.24 mongodb-org-database=6.0.24 mongodb-org-server=6.0.24 mongodb-mongosh mongodb-org-shell=6.0.24 mongodb-org-mongos=6.0.24 mongodb-org-tools=6.0.24 mongodb-org-database-tools-extra=6.0.24",
+      "sudo systemctl enable mongod",
+      "sudo systemctl start mongod"
+    ]
   }
 }
 

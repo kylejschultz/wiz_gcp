@@ -37,11 +37,13 @@ module "gke" {
 }
 
 module "db" {
-  source        = "./modules/db"
-  instance_name = "wiz-db"
-  zone          = "us-west1-a"
-  machine_type  = "e2-medium"
-  network       = module.network.vpc_id
-  subnetwork    = module.network.subnet_self_link
-  network_tags  = ["db"]
+  source               = "./modules/db"
+  instance_name        = "wiz-db"
+  zone                 = "us-west1-a"
+  machine_type         = "e2-medium"
+  network              = module.network.vpc_id
+  subnetwork           = module.network.subnet_self_link
+  network_tags         = ["db"]
+  ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+  ssh_private_key_path = "~/.ssh/id_rsa"
 }
