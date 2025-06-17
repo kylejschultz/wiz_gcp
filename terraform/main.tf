@@ -35,3 +35,12 @@ module "gke" {
   node_machine_type = "e2-medium"
   node_count        = 1
 }
+
+module "db" {
+  source        = "./modules/db"
+  instance_name = "wiz-db"
+  zone          = "us-west1-a"
+  machine_type  = "e2-medium"
+  subnetwork    = module.network.subnet_self_link
+  network_tags  = ["db"]
+}
