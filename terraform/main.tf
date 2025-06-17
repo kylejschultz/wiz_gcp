@@ -41,6 +41,7 @@ module "db" {
   instance_name = "wiz-db"
   zone          = "us-west1-a"
   machine_type  = "e2-medium"
+  network       = module.network.vpc_id
   subnetwork    = module.network.subnet_self_link
   network_tags  = ["db"]
 }

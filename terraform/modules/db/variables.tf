@@ -23,3 +23,8 @@ variable "network_tags" {
   type        = list(string)
   default     = []
 }
+
+variable "network" {
+  description = "Self-link or ID of the VPC network"
+  type        = string
+}
