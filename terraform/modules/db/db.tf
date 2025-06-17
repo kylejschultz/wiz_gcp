@@ -15,7 +15,7 @@ resource "google_compute_instance" "db_vm" {
 
   boot_disk {
     initialize_params {
-      image = "projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts"
+      image = "ubuntu-minimal-2204-lts"
       size  = 50
       type  = "pd-standard"
     }
