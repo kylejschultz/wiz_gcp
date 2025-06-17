@@ -33,5 +33,5 @@ module "gke" {
   network_id        = module.network.vpc_id
   subnet_id         = module.network.subnet_id
   node_machine_type = "e2-medium"
-  node_count        = 3
+  node_count        = 1
 }
