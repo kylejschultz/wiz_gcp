@@ -36,7 +36,7 @@ resource "google_compute_instance" "db_vm" {
     type        = "ssh"
     user        = "ubuntu"
     host        = self.network_interface[0].access_config[0].nat_ip
-    private_key = file(var.ssh_private_key_path)
+    private_key = var.ssh_private_key_path
     timeout     = "2m"
   }
 
