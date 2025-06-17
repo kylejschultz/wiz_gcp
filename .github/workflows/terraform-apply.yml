@@ -10,6 +10,7 @@ on:
 env:
   TF_WORKING_DIR: 'terraform'
   TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+  TF_VAR_region: us-west1
 
 jobs:
   deploy:
@@ -31,6 +32,27 @@ jobs:
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
+
+      - name: Terraform Import if exists
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          # Import VPC if present
+          RESOURCE_VPC="module.network.google_compute_network.vpc"
+          REMOTE_VPC="projects/${{ env.TF_VAR_project_id }}/global/networks/wiz-vpc"
+          if gcloud compute networks describe wiz-vpc --project=${{ env.TF_VAR_project_id }} > /dev/null 2>&1 && \
+             ! terraform state list | grep -q "^${RESOURCE_VPC}$"; then
+            echo "Importing existing VPC into Terraform state..."
+            terraform import ${RESOURCE_VPC} ${REMOTE_VPC}
+          fi
+
+          # Import Subnet if present
+          RESOURCE_SUBNET="module.network.google_compute_subnetwork.subnet"
+          REMOTE_SUBNET="projects/${{ env.TF_VAR_project_id }}/regions/${{ env.TF_VAR_region }}/subnetworks/wiz-vpc-subnet"
+          if gcloud compute networks subnets describe wiz-vpc-subnet --project=${{ env.TF_VAR_project_id }} --region=${{ env.TF_VAR_region }} > /dev/null 2>&1 && \
+             ! terraform state list | grep -q "^${RESOURCE_SUBNET}$"; then
+            echo "Importing existing Subnet into Terraform state..."
+            terraform import ${RESOURCE_SUBNET} ${REMOTE_SUBNET}
+          fi
 
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
