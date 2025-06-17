@@ -23,7 +23,7 @@ resource "google_compute_instance" "db_vm" {
 
   network_interface {
     subnetwork = var.subnetwork
-    # No external IP for internal-only DB traffic
+    access_config {}
   }
 
   tags = var.network_tags
@@ -45,4 +45,15 @@ resource "google_compute_instance" "db_vm" {
       fi
     EOT
   }
+}
+
+resource "google_compute_firewall" "db_ssh" {
+  name    = "${var.instance_name}-ssh-ingress"
+  network = var.network
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = var.network_tags
 }
