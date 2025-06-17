@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  TF_WORKING_DIR: terraform
+  TF_WORKING_DIR: 'terraform'
   TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
 
 jobs:
