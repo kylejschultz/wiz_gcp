@@ -3,6 +3,8 @@ name: Terraform Apply to GCP
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'terraform/**'
   workflow_dispatch:
 
 env:
