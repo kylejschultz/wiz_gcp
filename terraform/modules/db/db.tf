@@ -29,7 +29,7 @@ resource "google_compute_instance" "db_vm" {
   tags = var.network_tags
 
   metadata = {
-    ssh-keys = "ubuntu:${file(var.ssh_public_key_path)}"
+    ssh-keys = "ubuntu:${var.ssh_public_key_path}"
   }
 
   connection {
