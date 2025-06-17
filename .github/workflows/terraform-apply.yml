@@ -11,6 +11,7 @@ env:
   TF_WORKING_DIR: 'terraform'
   TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
   TF_VAR_region: us-west1
+  TF_VAR_zone: us-west1-a
 
 jobs:
   deploy:
@@ -70,6 +71,24 @@ jobs:
              ! terraform state list | grep -q "^${RESOURCE_NODEPOOL}$"; then
             echo "Importing existing GKE node pool into Terraform state..."
             terraform import ${RESOURCE_NODEPOOL} ${REMOTE_NODEPOOL}
+          fi
+
+          # Import DB VM if present
+          RESOURCE_DB="module.db.google_compute_instance.db_vm"
+          REMOTE_DB="projects/${{ env.TF_VAR_project_id }}/zones/${{ env.TF_VAR_zone }}/instances/wiz-db"
+          if gcloud compute instances describe wiz-db --project=${{ env.TF_VAR_project_id }} --zone=${{ env.TF_VAR_zone }} > /dev/null 2>&1 && \
+             ! terraform state list | grep -q "^${RESOURCE_DB}$"; then
+            echo "Importing existing DB VM into Terraform state..."
+            terraform import ${RESOURCE_DB} ${REMOTE_DB}
+          fi
+
+          # Import DB SSH firewall if present
+          RESOURCE_FW="module.db.google_compute_firewall.db_ssh"
+          REMOTE_FW="projects/${{ env.TF_VAR_project_id }}/global/firewalls/wiz-db-ssh-ingress"
+          if gcloud compute firewall-rules describe wiz-db-ssh-ingress --project=${{ env.TF_VAR_project_id }} > /dev/null 2>&1 && \
+             ! terraform state list | grep -q "^${RESOURCE_FW}$"; then
+            echo "Importing existing DB SSH firewall into Terraform state..."
+            terraform import ${RESOURCE_FW} ${REMOTE_FW}
           fi
 
       - name: Terraform Plan
