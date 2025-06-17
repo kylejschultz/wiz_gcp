@@ -54,6 +54,24 @@ jobs:
             terraform import ${RESOURCE_SUBNET} ${REMOTE_SUBNET}
           fi
 
+          # Import GKE cluster if present
+          RESOURCE_GKE="module.gke.google_container_cluster.primary"
+          REMOTE_GKE="projects/${{ env.TF_VAR_project_id }}/locations/${{ env.TF_VAR_region }}/clusters/wiz-cluster"
+          if gcloud container clusters describe wiz-cluster --project=${{ env.TF_VAR_project_id }} --region=${{ env.TF_VAR_region }} > /dev/null 2>&1 && \
+             ! terraform state list | grep -q "^${RESOURCE_GKE}$"; then
+            echo "Importing existing GKE cluster into Terraform state..."
+            terraform import ${RESOURCE_GKE} ${REMOTE_GKE}
+          fi
+
+          # Import GKE node pool if present
+          RESOURCE_NODEPOOL="module.gke.google_container_node_pool.default"
+          REMOTE_NODEPOOL="projects/${{ env.TF_VAR_project_id }}/locations/${{ env.TF_VAR_region }}/clusters/wiz-cluster/nodePools/wiz-cluster-pool"
+          if gcloud container node-pools list --cluster=wiz-cluster --region=${{ env.TF_VAR_region }} --project=${{ env.TF_VAR_project_id }} --format="value(name)" | grep -q "^wiz-cluster-pool$" && \
+             ! terraform state list | grep -q "^${RESOURCE_NODEPOOL}$"; then
+            echo "Importing existing GKE node pool into Terraform state..."
+            terraform import ${RESOURCE_NODEPOOL} ${REMOTE_NODEPOOL}
+          fi
+
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform plan -out=plan.tfplan
