@@ -40,16 +40,15 @@ resource "google_compute_instance" "db_vm" {
     timeout     = "2m"
   }
 
+  provisioner "file" {
+    source      = "${path.module}/../scripts/mongo-install.sh"
+    destination = "/home/ubuntu/mongo-install.sh"
+  }
+
   provisioner "remote-exec" {
     inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y gnupg curl",
-      "curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor",
-      "echo 'deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse' | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list",
-      "sudo apt-get update",
-      "sudo apt-get install -y mongodb-org=6.0.24 mongodb-org-database=6.0.24 mongodb-org-server=6.0.24 mongodb-mongosh mongodb-org-shell=6.0.24 mongodb-org-mongos=6.0.24 mongodb-org-tools=6.0.24 mongodb-org-database-tools-extra=6.0.24",
-      "sudo systemctl enable mongod",
-      "sudo systemctl start mongod"
+      "chmod +x ~/mongo-install.sh",
+      "~/mongo-install.sh"
     ]
   }
 }
