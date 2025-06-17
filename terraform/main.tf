@@ -25,3 +25,13 @@ module "network" {
   subnet_cidr  = "10.0.0.0/16"
   region       = "us-west1"
 }
+
+module "gke" {
+  source            = "./modules/gke"
+  cluster_name      = "wiz-cluster"
+  region            = "us-west1"
+  network_id        = module.network.vpc_id
+  subnet_id         = module.network.subnet_id
+  node_machine_type = "e2-medium"
+  node_count        = 3
+}
