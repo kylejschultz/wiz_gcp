@@ -34,62 +34,21 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
 
-      - name: Terraform Import if exists
-        working-directory: ${{ env.TF_WORKING_DIR }}
+      - name: Install Terraformer
         run: |
-          # Import VPC if present
-          RESOURCE_VPC="module.network.google_compute_network.vpc"
-          REMOTE_VPC="projects/${{ env.TF_VAR_project_id }}/global/networks/wiz-vpc"
-          if gcloud compute networks describe wiz-vpc --project=${{ env.TF_VAR_project_id }} > /dev/null 2>&1 && \
-             ! terraform state list | grep -q "^${RESOURCE_VPC}$"; then
-            echo "Importing existing VPC into Terraform state..."
-            terraform import ${RESOURCE_VPC} ${REMOTE_VPC}
-          fi
+          curl -Lo terraformer https://github.com/GoogleCloudPlatform/terraformer/releases/download/0.8.2/terraformer-all-linux-amd64
+          chmod +x terraformer && sudo mv terraformer /usr/local/bin/
 
-          # Import Subnet if present
-          RESOURCE_SUBNET="module.network.google_compute_subnetwork.subnet"
-          REMOTE_SUBNET="projects/${{ env.TF_VAR_project_id }}/regions/${{ env.TF_VAR_region }}/subnetworks/wiz-vpc-subnet"
-          if gcloud compute networks subnets describe wiz-vpc-subnet --project=${{ env.TF_VAR_project_id }} --region=${{ env.TF_VAR_region }} > /dev/null 2>&1 && \
-             ! terraform state list | grep -q "^${RESOURCE_SUBNET}$"; then
-            echo "Importing existing Subnet into Terraform state..."
-            terraform import ${RESOURCE_SUBNET} ${REMOTE_SUBNET}
-          fi
-
-          # Import GKE cluster if present
-          RESOURCE_GKE="module.gke.google_container_cluster.primary"
-          REMOTE_GKE="projects/${{ env.TF_VAR_project_id }}/locations/${{ env.TF_VAR_region }}/clusters/wiz-cluster"
-          if gcloud container clusters describe wiz-cluster --project=${{ env.TF_VAR_project_id }} --region=${{ env.TF_VAR_region }} > /dev/null 2>&1 && \
-             ! terraform state list | grep -q "^${RESOURCE_GKE}$"; then
-            echo "Importing existing GKE cluster into Terraform state..."
-            terraform import ${RESOURCE_GKE} ${REMOTE_GKE}
-          fi
-
-          # Import GKE node pool if present
-          RESOURCE_NODEPOOL="module.gke.google_container_node_pool.default"
-          REMOTE_NODEPOOL="projects/${{ env.TF_VAR_project_id }}/locations/${{ env.TF_VAR_region }}/clusters/wiz-cluster/nodePools/wiz-cluster-pool"
-          if gcloud container node-pools list --cluster=wiz-cluster --region=${{ env.TF_VAR_region }} --project=${{ env.TF_VAR_project_id }} --format="value(name)" | grep -q "^wiz-cluster-pool$" && \
-             ! terraform state list | grep -q "^${RESOURCE_NODEPOOL}$"; then
-            echo "Importing existing GKE node pool into Terraform state..."
-            terraform import ${RESOURCE_NODEPOOL} ${REMOTE_NODEPOOL}
-          fi
-
-          # Import DB VM if present
-          RESOURCE_DB="module.db.google_compute_instance.db_vm"
-          REMOTE_DB="projects/${{ env.TF_VAR_project_id }}/zones/${{ env.TF_VAR_zone }}/instances/wiz-db"
-          if gcloud compute instances describe wiz-db --project=${{ env.TF_VAR_project_id }} --zone=${{ env.TF_VAR_zone }} > /dev/null 2>&1 && \
-             ! terraform state list | grep -q "^${RESOURCE_DB}$"; then
-            echo "Importing existing DB VM into Terraform state..."
-            terraform import ${RESOURCE_DB} ${REMOTE_DB}
-          fi
-
-          # Import DB SSH firewall if present
-          RESOURCE_FW="module.db.google_compute_firewall.db_ssh"
-          REMOTE_FW="projects/${{ env.TF_VAR_project_id }}/global/firewalls/wiz-db-ssh-ingress"
-          if gcloud compute firewall-rules describe wiz-db-ssh-ingress --project=${{ env.TF_VAR_project_id }} > /dev/null 2>&1 && \
-             ! terraform state list | grep -q "^${RESOURCE_FW}$"; then
-            echo "Importing existing DB SSH firewall into Terraform state..."
-            terraform import ${RESOURCE_FW} ${REMOTE_FW}
-          fi
+      - name: Bulk‐import GCP infra with Terraformer
+        env:
+          GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          GOOGLE_REGION:  us-west1
+        run: |
+          terraformer import google \
+            --resources=compute_network,compute_subnetwork,compute_firewall,compute_instance,container_cluster,container_node_pool \
+            --connect=true \
+            --projects=${GOOGLE_PROJECT} \
+            --regions=${GOOGLE_REGION}
 
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
