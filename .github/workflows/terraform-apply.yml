@@ -37,7 +37,8 @@ jobs:
       - name: Install Terraformer
         run: |
           curl -Lo terraformer https://github.com/GoogleCloudPlatform/terraformer/releases/download/0.8.2/terraformer-all-linux-amd64
-          chmod +x terraformer && sudo mv terraformer /usr/local/bin/
+          chmod +x terraformer-all-linux-amd64
+          sudo mv terraformer-all-linux-amd64 /usr/local/bin/terraformer
 
       - name: Bulk‐import GCP infra with Terraformer
         env:
