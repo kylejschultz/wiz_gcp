@@ -50,10 +50,11 @@ jobs:
           GOOGLE_REGION:  us-west1
         run: |
           terraformer import google \
-            --resources=compute_network,compute_subnetwork,compute_firewall,compute_instance,container_cluster,container_node_pool \
-            --connect=true \
-            --projects=${GOOGLE_PROJECT} \
-            --regions=${GOOGLE_REGION}
+              --resources=networks,subnetworks,firewall,instances,gke \
+              --connect=true \
+              --projects=${GOOGLE_PROJECT} \
+              --regions=${GOOGLE_REGION}
+
 
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
