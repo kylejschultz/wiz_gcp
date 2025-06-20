@@ -29,7 +29,6 @@ resource "google_compute_instance" "db_vm" {
   tags = var.network_tags
 
   metadata = {
-    ssh-keys       = "ubuntu:${file(var.ssh_public_key_path)}"
     startup-script = file("${path.module}/../../scripts/mongo-install.sh")
   }
 }

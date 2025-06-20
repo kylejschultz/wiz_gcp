@@ -28,8 +28,3 @@ variable "network" {
   description = "Self-link or ID of the VPC network"
   type        = string
 }
-
-variable "ssh_public_key_path" {
-  description = "Path to SSH public key for user ubuntu"
-  type        = string
-}
