@@ -25,3 +25,31 @@ sudo systemctl enable mongod
 sudo systemctl start mongod
 
 echo "MongoDB installation complete."
+
+echo "Enable password auth"
+sudo tee -a /etc/mongod.conf <<'EOF'
+
+security:
+  authorization: "enabled"
+EOF
+
+echo "Allow Mongo to listen on all interfaces"
+sudo sed -i '/^net:/a\  bindIp: 0.0.0.0' /etc/mongod.conf
+
+sudo systemctl restart mongod
+
+echo "set Admin credentials"
+cat <<'EOF' > /tmp/mongo-init.js
+// switch to the admin database, then create root user
+db = db.getSiblingDB("admin");
+db.createUser({
+  user:   "kyle",
+  pwd:    "gcpDemo",
+  roles: [ { role: "root", db: "admin" } ]
+});
+EOF
+
+mongo --quiet /tmp/mongo-init.js
+
+# (marker touch if you haven’t already)
+touch /var/lib/mongodb/.initialized

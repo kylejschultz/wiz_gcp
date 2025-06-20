@@ -43,5 +43,6 @@ module "db" {
   machine_type  = "e2-medium"
   network       = module.network.vpc_id
   subnetwork    = module.network.subnet_self_link
+  subnet_cidr   = module.network.subnet_cidr
   network_tags  = ["db"]
 }

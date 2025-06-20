@@ -44,3 +44,19 @@ resource "google_compute_firewall" "db_ssh" {
   source_ranges = ["0.0.0.0/0"]
   target_tags   = var.network_tags
 }
+
+resource "google_compute_firewall" "db_mongo" {
+  name    = "${var.instance_name}-mongo-ingress"
+  network = var.network
+
+  allow {
+    protocol = "tcp"
+    ports    = ["27017"]
+  }
+
+  # only allow from your VPC subnet
+  source_ranges = [var.subnet_cidr]
+
+  # make sure your VM tags include this firewall
+  target_tags = var.network_tags
+}
