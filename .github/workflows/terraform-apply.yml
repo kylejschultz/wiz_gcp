@@ -41,6 +41,9 @@ jobs:
             -o /usr/local/bin/terraformer
           sudo chmod +x /usr/local/bin/terraformer
 
+      - name: Prepare Terraform plugin directory
+        run: mkdir -p $HOME/.terraform.d/plugins/linux_amd64
+
       - name: Bulk‐import GCP infra with Terraformer
         env:
           GOOGLE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
