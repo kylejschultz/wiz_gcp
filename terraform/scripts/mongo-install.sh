@@ -49,7 +49,7 @@ db.createUser({
 });
 EOF
 
-mongo --quiet /tmp/mongo-init.js
+mongod --quiet /tmp/mongo-init.js
 
 # (marker touch if you haven’t already)
 touch /var/lib/mongodb/.initialized
