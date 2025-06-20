@@ -28,3 +28,8 @@ variable "network" {
   description = "Self-link or ID of the VPC network"
   type        = string
 }
+
+variable "subnet_cidr" {
+  description = "CIDR range of the VPC subnetwork for MongoDB firewall"
+  type        = string
+}
