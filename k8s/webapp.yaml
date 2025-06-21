@@ -24,8 +24,12 @@ spec:
         ports:
           - containerPort: 8080
         env:
-          - name: MONGO_URI
-            value: mongodb://kyle:gcpDemo@${DB_INTERNAL_IP}:27017/?authSource=admin
+          - name: MONGO_HOST
+            value: "${DB_INTERNAL_IP}"
+          - name: MONGO_USER
+            value: "kyle"
+          - name: MONGO_PASS
+            value: "gcpDemo"
         resources:
           limits:
             memory: "128Mi"
