@@ -78,7 +78,7 @@ jobs:
 
           echo "Importing GCR API enablement..."
           terraform import module.gcr.google_project_service.container_registry \
-            "${{ env.TF_VAR_project_id }}/services/containerregistry.googleapis.com" || true
+            "${{ env.TF_VAR_project_id }}/containerregistry.googleapis.com" || true
 
           echo "Importing GCR IAM binding..."
           terraform import module.gcr.google_project_iam_member.gha_gcr_write \
