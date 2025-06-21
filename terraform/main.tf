@@ -45,16 +45,11 @@ module "storage" {
   project_id  = var.project_id
 }
 
-resource "google_pubsub_topic" "mongo_backup" {
-  name    = "mongo-backup-topic"
-  project = var.project_id
-}
-
 module "backup" {
-  source       = "./modules/backup"
-  mongo_host   = module.db.db_vm_internal_ip
-  mongo_user   = "kyle"
-  mongo_pass   = "gcpDemo"
-  bucket       = module.storage.bucket_name
-  pubsub_topic = google_pubsub_topic.mongo_backup.id
+  source     = "./modules/backup"
+  mongo_host = module.db.db_vm_internal_ip
+  mongo_user = "kyle"
+  mongo_pass = "gcpDemo"
+  bucket     = module.storage.bucket_name
+  project_id = var.project_id
 }

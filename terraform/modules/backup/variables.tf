@@ -18,7 +18,7 @@ variable "bucket" {
   type        = string
 }
 
-variable "pubsub_topic" {
-  description = "ID of the Pub/Sub topic for triggering MongoDB backups"
+variable "project_id" {
+  description = "GCP Project ID"
   type        = string
 }
