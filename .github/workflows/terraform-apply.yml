@@ -67,9 +67,14 @@ jobs:
           terraform import module.db.google_compute_firewall.db_mongo \
             projects/${{ env.TF_VAR_project_id }}/global/firewalls/wiz-db-mongo-ingress || true
 
-          echo "Importing Storage Bucket..."
-          terraform import module.storage.google_storage_bucket.backups \
-            "wiz-db-backups-${{ env.TF_VAR_project_id }}" || true
+          # Import Storage Bucket if it exists
+          BUCKET_NAME="wiz-db-backups-${{ env.TF_VAR_project_id }}"
+          if gsutil ls "gs://${BUCKET_NAME}" > /dev/null 2>&1; then
+            echo "Importing Storage Bucket ${BUCKET_NAME} into Terraform state..."
+            terraform import module.storage.google_storage_bucket.backups "${BUCKET_NAME}" || true
+          else
+            echo "Bucket ${BUCKET_NAME} not found, skipping import"
+          fi
 
           set -e
 
