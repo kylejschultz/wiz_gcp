@@ -55,7 +55,10 @@ resource "google_compute_firewall" "db_mongo" {
   }
 
   # only allow from your VPC subnet
-  source_ranges = [var.subnet_cidr]
+  source_ranges = [
+    var.subnet_cidr,
+    var.pod_cidr
+  ]
 
   # make sure your VM tags include this firewall
   target_tags = var.network_tags

@@ -33,3 +33,8 @@ variable "subnet_cidr" {
   description = "CIDR range of the VPC subnetwork for MongoDB firewall"
   type        = string
 }
+
+variable "pod_cidr" {
+  description = "Secondary Pod IP range CIDR from GKE"
+  type        = string
+}

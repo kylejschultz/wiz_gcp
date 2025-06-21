@@ -44,5 +44,6 @@ module "db" {
   network       = module.network.vpc_id
   subnetwork    = module.network.subnet_self_link
   subnet_cidr   = "10.0.0.0/16"
+  pod_cidr      = "10.8.0.0/14"
   network_tags  = ["db"]
 }
