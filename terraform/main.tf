@@ -44,12 +44,3 @@ module "storage" {
   location    = "us-west1"
   project_id  = var.project_id
 }
-
-module "backup" {
-  source     = "./modules/backup"
-  mongo_host = module.db.db_vm_internal_ip
-  mongo_user = "kyle"
-  mongo_pass = "gcpDemo"
-  bucket     = module.storage.bucket_name
-  project_id = var.project_id
-}
