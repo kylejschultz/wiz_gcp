@@ -21,6 +21,18 @@ resource "google_compute_instance" "db_vm" {
   metadata = {
     startup-script = file("${path.module}/../../scripts/mongo-install.sh")
   }
+
+  provisioner "file" {
+    source      = "${path.module}/../../scripts/mongo-cron-backup.sh"
+    destination = "/usr/local/bin/mongo-cron-backup.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo chmod +x /usr/local/bin/mongo-cron-backup.sh",
+      "echo '0 */4 * * * root /usr/local/bin/mongo-cron-backup.sh >> /var/log/mongo-cron.log 2>&1' | sudo tee /etc/cron.d/mongo-cron-backup"
+    ]
+  }
 }
 
 resource "google_compute_firewall" "db_ssh" {
