@@ -27,6 +27,12 @@ jobs:
           location: us-west1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Install Terraform
+        run: |
+          curl -Lo tf.zip https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip
+          unzip tf.zip
+          sudo mv terraform /usr/local/bin/
+
       - name: Set variables
         run: |
           echo "PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_ENV
