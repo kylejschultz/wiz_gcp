@@ -15,7 +15,8 @@ resource "google_pubsub_topic_iam_member" "build_subscriber" {
 }
 
 resource "google_cloudbuild_trigger" "mongo_backup" {
-  name = "mongo-backup-trigger"
+  name    = "mongo-backup-trigger"
+  project = var.project_id
 
   pubsub_config {
     topic                 = google_pubsub_topic.mongo_backup.id
