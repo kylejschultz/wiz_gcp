@@ -27,16 +27,15 @@ jobs:
           location: us-west1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Install Terraform
-        run: |
-          curl -Lo tf.zip https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip
-          unzip tf.zip
-          sudo mv terraform /usr/local/bin/
 
       - name: Set variables
         run: |
           echo "PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_ENV
-          DB_IP="$(terraform -chdir=terraform output -raw db_vm_internal_ip)"
+
+          DB_IP=$(gcloud compute instances describe wiz-db \
+            --project="${{ secrets.GCP_PROJECT_ID }}" \
+            --zone="us-west1-a" \
+            --format="get(networkInterfaces[0].networkIP)")
           echo "DB_INTERNAL_IP=${DB_IP}" >> $GITHUB_ENV
 
       - name: Deploy to GKE
