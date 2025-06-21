@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: webapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasky-web
+  namespace: webapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tasky-web
+  template:
+    metadata:
+      labels:
+        app: tasky-web
+    spec:
+      containers:
+      - name: tasky-web
+        image: gcr.io/${PROJECT_ID}/tasky-web:latest
+        ports:
+          - containerPort: 8080
+        env:
+          - name: MONGO_URI
+            value: "mongodb://kyle:gcpDemo@${DB_INTERNAL_IP}:27017/?authSource=admin"
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasky-web-svc
+  namespace: webapp
+  labels:
+    app: tasky-web
+spec:
+  selector:
+    app: tasky-web
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
