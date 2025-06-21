@@ -66,6 +66,11 @@ jobs:
           echo "Importing DB Mongo Firewall..."
           terraform import module.db.google_compute_firewall.db_mongo \
             projects/${{ env.TF_VAR_project_id }}/global/firewalls/wiz-db-mongo-ingress || true
+
+          echo "Importing Storage Bucket..."
+          terraform import module.storage.google_storage_bucket.backups \
+            "wiz-db-backups-${{ env.TF_VAR_project_id }}" || true
+
           set -e
 
       - name: Terraform Plan
