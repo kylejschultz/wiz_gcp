@@ -51,9 +51,10 @@ resource "google_pubsub_topic" "mongo_backup" {
 }
 
 module "backup" {
-  source     = "./modules/backup"
-  mongo_host = module.db.db_vm_internal_ip
-  mongo_user = "kyle"
-  mongo_pass = "gcpDemo"
-  bucket     = module.storage.bucket_name
+  source       = "./modules/backup"
+  mongo_host   = module.db.db_vm_internal_ip
+  mongo_user   = "kyle"
+  mongo_pass   = "gcpDemo"
+  bucket       = module.storage.bucket_name
+  pubsub_topic = google_pubsub_topic.mongo_backup.id
 }

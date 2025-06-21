@@ -17,3 +17,8 @@ variable "bucket" {
   description = "Name of the GCS bucket for backups"
   type        = string
 }
+
+variable "pubsub_topic" {
+  description = "ID of the Pub/Sub topic for triggering MongoDB backups"
+  type        = string
+}
