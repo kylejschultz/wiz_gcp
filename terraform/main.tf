@@ -47,3 +47,10 @@ module "db" {
   pod_cidr      = "10.8.0.0/14"
   network_tags  = ["db"]
 }
+
+module "storage" {
+  source      = "./modules/storage"
+  bucket_name = "wiz-db-backups-${var.project_id}"
+  location    = "us-west1"
+  project_id  = var.project_id
+}
