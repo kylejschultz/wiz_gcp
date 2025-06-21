@@ -96,6 +96,10 @@ jobs:
           terraform import google_cloud_scheduler_job.mongo_backup_job \
             "projects/${{ env.TF_VAR_project_id }}/locations/${{ env.TF_VAR_region }}/jobs/mongo-backup-job" || true
 
+          echo "Importing Scheduler Invoker Service Account..."
+          terraform import module.backup.google_service_account.scheduler_invoker \
+            "projects/${{ env.TF_VAR_project_id }}/serviceAccounts/scheduler-invoker@${{ env.TF_VAR_project_id }}.iam.gserviceaccount.com" || true
+
           set -e
 
       - name: Terraform Plan
