@@ -52,7 +52,6 @@ resource "google_pubsub_topic" "mongo_backup" {
 
 module "backup" {
   source     = "./modules/backup"
-  project_id = var.project_id
   mongo_host = module.db.db_vm_internal_ip
   mongo_user = "kyle"
   mongo_pass = "gcpDemo"
