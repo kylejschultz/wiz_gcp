@@ -24,10 +24,10 @@ spec:
         ports:
           - containerPort: 8080
         env:
-          - name: MONGO_URI
-            value: mongodb://kyle:gcpDemo@${DB_INTERNAL_IP}:27017/?authSource=admin
+          - name: MONGODB_URI
+            value: "mongodb://kyle:gcpDemo@${DB_INTERNAL_IP}:27017/?authSource=admin"
           - name: SECRET_KEY
-            value: secret123123123
+            value: "secret123123123"
         resources:
           limits:
             memory: "128Mi"
