@@ -1,0 +1,30 @@
+
+
+name: Build & Push Mongo Backup Image
+
+on:
+  push:
+    paths:
+      - 'mongo-backup/**'
+      - '.github/workflows/mongo-backup-build.yml'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build and Push Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/mongo-backup:latest ./mongo-backup
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/mongo-backup:latest
