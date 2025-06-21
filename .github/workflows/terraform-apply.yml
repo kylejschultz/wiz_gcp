@@ -80,6 +80,22 @@ jobs:
           terraform import google_pubsub_topic.mongo_backup \
             "projects/${{ env.TF_VAR_project_id }}/topics/mongo-backup-topic" || true
 
+          echo "Importing Scheduler service account..."
+          terraform import google_service_account.scheduler_invoker \
+            "projects/${{ env.TF_VAR_project_id }}/serviceAccounts/scheduler-invoker@${{ env.TF_VAR_project_id }}.iam.gserviceaccount.com" || true
+
+          echo "Importing Pub/Sub subscriber IAM..."
+          terraform import google_pubsub_topic_iam_member.build_subscriber \
+            "projects/${{ env.TF_VAR_project_id }}/topics/mongo-backup-topic roles/pubsub.subscriber serviceAccount:scheduler-invoker@${{ env.TF_VAR_project_id }}.iam.gserviceaccount.com" || true
+
+          echo "Importing Cloud Build trigger..."
+          terraform import google_cloudbuild_trigger.mongo_backup \
+            "projects/${{ env.TF_VAR_project_id }}/triggers/mongo-backup-trigger" || true
+
+          echo "Importing Cloud Scheduler job..."
+          terraform import google_cloud_scheduler_job.mongo_backup_job \
+            "projects/${{ env.TF_VAR_project_id }}/locations/${{ env.TF_VAR_region }}/jobs/mongo-backup-job" || true
+
           set -e
 
       - name: Terraform Plan
