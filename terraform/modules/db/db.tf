@@ -17,6 +17,10 @@ resource "google_compute_instance" "db_vm" {
   }
 
   tags = var.network_tags
+  service_account {
+    email  = var.service_account_email
+    scopes = ["https://www.googleapis.com/auth/devstorage.read_write"]
+  }
 
   metadata = {
     startup-script = file("${path.module}/../../scripts/mongo-bootstrap.sh")

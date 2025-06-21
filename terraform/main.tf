@@ -27,15 +27,16 @@ module "gke" {
 }
 
 module "db" {
-  source        = "./modules/db"
-  instance_name = "wiz-db"
-  zone          = "us-west1-a"
-  machine_type  = "e2-medium"
-  network       = module.network.vpc_id
-  subnetwork    = module.network.subnet_self_link
-  subnet_cidr   = "10.0.0.0/16"
-  pod_cidr      = "10.8.0.0/14"
-  network_tags  = ["db"]
+  source                = "./modules/db"
+  instance_name         = "wiz-db"
+  zone                  = "us-west1-a"
+  machine_type          = "e2-medium"
+  network               = module.network.vpc_id
+  subnetwork            = module.network.subnet_self_link
+  subnet_cidr           = "10.0.0.0/16"
+  pod_cidr              = "10.8.0.0/14"
+  network_tags          = ["db"]
+  service_account_email = "github-deployer@clgcporg10-155.iam.gserviceaccount.com"
 }
 
 module "storage" {

@@ -38,3 +38,8 @@ variable "pod_cidr" {
   description = "Secondary Pod IP range CIDR from GKE"
   type        = string
 }
+
+variable "service_account_email" {
+  description = "Service account email for the DB VM to authenticate GCS uploads"
+  type        = string
+}
