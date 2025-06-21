@@ -39,7 +39,7 @@ sudo sed -i '/^net:/a\  bindIp: 0.0.0.0' /etc/mongod.conf
 sudo systemctl restart mongod
 
 echo "Bootstrapping admin user"
-mongo admin --eval 'db.createUser({
+mongosh admin --eval 'db.createUser({
   user: "kyle",
   pwd: "gcpDemo",
   roles: [ { role: "root", db: "admin" } ]
