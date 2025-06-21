@@ -54,3 +54,8 @@ module "storage" {
   location    = "us-west1"
   project_id  = var.project_id
 }
+
+resource "google_pubsub_topic" "mongo_backup" {
+  name    = "mongo-backup-topic"
+  project = var.project_id
+}

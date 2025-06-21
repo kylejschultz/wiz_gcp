@@ -76,6 +76,10 @@ jobs:
             echo "Bucket ${BUCKET_NAME} not found, skipping import"
           fi
 
+          echo "Importing Pub/Sub Topic..."
+          terraform import google_pubsub_topic.mongo_backup \
+            "projects/${{ env.TF_VAR_project_id }}/topics/mongo-backup-topic" || true
+
           set -e
 
       - name: Terraform Plan
