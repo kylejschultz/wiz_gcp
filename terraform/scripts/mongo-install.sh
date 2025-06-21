@@ -38,7 +38,7 @@ sudo sed -i 's/^[[:space:]]*bindIp:.*$/  bindIp: 0.0.0.0/' /etc/mongod.conf
 
 sudo systemctl restart mongod
 
-until mongo --host localhost --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; do
+until mongosh --host localhost --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' > /dev/null 2>&1; do
   echo "Waiting for MongoDB to start..."
   sleep 2
 done
