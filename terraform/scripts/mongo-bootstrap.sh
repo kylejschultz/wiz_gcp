@@ -49,3 +49,15 @@ mongosh admin --eval 'db.createUser({
   pwd: "gcpDemo",
   roles: [ { role: "root", db: "admin" } ]
 })'
+
+echo "Setting up Mongo Backup Cron Job"
+MARKER="/var/lib/mongo-cron-backup.initialized"
+if [ ! -f "$MARKER" ]; then
+  apt-get update && apt-get install -y curl
+  curl -fsSL https://raw.githubusercontent.com/kylejschultz/wiz_gcp/refs/heads/main/terraform/scripts/mongo-cron-backup.sh \
+    -o /usr/local/bin/mongo-cron-backup.sh
+  chmod +x /usr/local/bin/mongo-cron-backup.sh
+  echo '0 */4 * * * root /usr/local/bin/mongo-cron-backup.sh >> /var/log/mongo-cron.log 2>&1' \
+    > /etc/cron.d/mongo-cron-backup
+  touch "$MARKER"
+fi
