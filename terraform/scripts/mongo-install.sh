@@ -34,7 +34,7 @@ security:
 EOF
 
 echo "Allow Mongo to listen on all interfaces"
-sudo sed -i '/^net:/a\  bindIp: 0.0.0.0' /etc/mongod.conf
+sudo sed -i 's/^[[:space:]]*bindIp:.*$/  bindIp: 0.0.0.0/' /etc/mongod.conf
 
 sudo systemctl restart mongod
 
