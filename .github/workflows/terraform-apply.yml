@@ -76,6 +76,14 @@ jobs:
             echo "Bucket ${BUCKET_NAME} not found, skipping import"
           fi
 
+          echo "Importing GCR API enablement..."
+          terraform import module.gcr.google_project_service.container_registry \
+            "${{ env.TF_VAR_project_id }}/services/containerregistry.googleapis.com" || true
+
+          echo "Importing GCR IAM binding..."
+          terraform import module.gcr.google_project_iam_member.gha_gcr_write \
+            "projects/${{ env.TF_VAR_project_id }} roles/storage.objectAdmin serviceAccount:github-deployer@${{ env.TF_VAR_project_id }}.iam.gserviceaccount.com" || true
+
           set -e
 
       - name: Terraform Plan
