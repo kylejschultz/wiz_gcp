@@ -77,7 +77,7 @@ jobs:
           fi
 
           echo "Importing Pub/Sub Topic..."
-          terraform import module.backup.google_pubsub_topic.mongo_backup \
+          terraform import google_pubsub_topic.mongo_backup \
             "projects/${{ env.TF_VAR_project_id }}/topics/mongo-backup-topic" || true
 
           echo "Importing Pub/Sub subscriber IAM..."
