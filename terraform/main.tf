@@ -45,3 +45,9 @@ module "storage" {
   location    = "us-west1"
   project_id  = var.project_id
 }
+
+module "gcr" {
+  source            = "./modules/gcr"
+  project_id        = var.project_id
+  github_actions_sa = "github-deployer@${var.project_id}.iam.gserviceaccount.com"
+}
