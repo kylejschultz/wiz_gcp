@@ -14,3 +14,4 @@
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+.tflint.hcl

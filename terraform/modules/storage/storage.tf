@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5.0"
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-  }
-}
-
 resource "google_storage_bucket" "backups" {
   name                        = var.bucket_name
   location                    = var.location
