@@ -5,6 +5,7 @@
 .env.test.local
 .env.production.local
 .tmp
+*.code-workspace
 
 # Editor directories and files
 .vscode/
