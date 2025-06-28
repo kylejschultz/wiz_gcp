@@ -53,7 +53,9 @@ mongosh admin --eval 'db.createUser({
 echo "Setting up Mongo Backup Cron Job"
 MARKER="/var/lib/mongo-cron-backup.initialized"
 if [ ! -f "$MARKER" ]; then
-  apt-get update && apt-get install -y curl
+  apt-get update && apt-get install -y cron curl
+  systemctl enable cron
+  systemctl start cron
   curl -fsSL https://raw.githubusercontent.com/kylejschultz/wiz_gcp/refs/heads/main/terraform/scripts/mongo-cron-backup.sh \
     -o /usr/local/bin/mongo-cron-backup.sh
   chmod +x /usr/local/bin/mongo-cron-backup.sh
